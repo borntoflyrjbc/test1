@@ -198,7 +198,187 @@
             </div>
         </div>
     </section>
-
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Image Gallery</title>
+        <style>
+            .gallery-container {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+    
+            .main-image {
+                width: 100%;
+                height: 500px;
+                margin-bottom: 20px;
+                position: relative;
+                overflow: hidden;
+            }
+    
+            .main-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: none;
+                animation: fade 0.5s;
+            }
+    
+            .main-image img.active {
+                display: block;
+            }
+    
+            @keyframes fade {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+    
+            .thumbnails {
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+                padding: 10px 0;
+            }
+    
+            .thumbnail {
+                width: 100px;
+                height: 100px;
+                cursor: pointer;
+                opacity: 0.6;
+                transition: opacity 0.3s;
+            }
+    
+            .thumbnail:hover,
+            .thumbnail.active {
+                opacity: 1;
+            }
+    
+            .thumbnail img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+    
+            .nav-button {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(0, 0, 0, 0.5);
+                color: white;
+                border: none;
+                padding: 15px;
+                cursor: pointer;
+                z-index: 1;
+            }
+    
+            .prev {
+                left: 10px;
+            }
+    
+            .next {
+                right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="gallery-container">
+            <div class="main-image">
+                <button class="nav-button prev">❮</button>
+                <button class="nav-button next">❯</button>
+            </div>
+            <div class="thumbnails"></div>
+        </div>
+    
+        <script>
+            class ImageGallery {
+                constructor() {
+                    this.images = [
+                        './image-1.png',
+                        '/api/placeholder/800/500',
+                        '/api/placeholder/800/500',
+                        '/api/placeholder/800/500',
+                        '/api/placeholder/800/500'
+                    ];
+                    this.currentIndex = 0;
+                    this.mainImage = document.querySelector('.main-image');
+                    this.thumbnailsContainer = document.querySelector('.thumbnails');
+                    
+                    this.initializeGallery();
+                    this.addEventListeners();
+                }
+    
+                initializeGallery() {
+                    // Create main images
+                    this.images.forEach((src, index) => {
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = `Image ${index + 1}`;
+                        if (index === 0) img.classList.add('active');
+                        this.mainImage.insertBefore(img, this.mainImage.firstChild);
+                    });
+    
+                    // Create thumbnails
+                    this.images.forEach((src, index) => {
+                        const thumbnail = document.createElement('div');
+                        thumbnail.className = 'thumbnail';
+                        if (index === 0) thumbnail.classList.add('active');
+    
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = `Thumbnail ${index + 1}`;
+                        
+                        thumbnail.appendChild(img);
+                        this.thumbnailsContainer.appendChild(thumbnail);
+                    });
+                }
+    
+                addEventListeners() {
+                    // Navigation buttons
+                    document.querySelector('.prev').addEventListener('click', () => this.navigate(-1));
+                    document.querySelector('.next').addEventListener('click', () => this.navigate(1));
+    
+                    // Thumbnail clicks
+                    const thumbnails = document.querySelectorAll('.thumbnail');
+                    thumbnails.forEach((thumbnail, index) => {
+                        thumbnail.addEventListener('click', () => this.showImage(index));
+                    });
+    
+                    // Keyboard navigation
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'ArrowLeft') this.navigate(-1);
+                        if (e.key === 'ArrowRight') this.navigate(1);
+                    });
+                }
+    
+                navigate(direction) {
+                    this.showImage((this.currentIndex + direction + this.images.length) % this.images.length);
+                }
+    
+                showImage(index) {
+                    // Update active classes
+                    const mainImages = this.mainImage.querySelectorAll('img');
+                    const thumbnails = this.thumbnailsContainer.querySelectorAll('.thumbnail');
+    
+                    mainImages[this.currentIndex].classList.remove('active');
+                    thumbnails[this.currentIndex].classList.remove('active');
+    
+                    this.currentIndex = index;
+    
+                    mainImages[this.currentIndex].classList.add('active');
+                    thumbnails[this.currentIndex].classList.add('active');
+                }
+            }
+    
+            // Initialize the gallery when the page loads
+            window.addEventListener('DOMContentLoaded', () => {
+                new ImageGallery();
+            });
+        </script>
+    </body>
+    </html>
     <section class="contact" id="contact">
         <div class="contact-form">
             <h2>Contact Us</h2>
